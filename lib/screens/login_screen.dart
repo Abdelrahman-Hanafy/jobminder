@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:jobminder/main.dart';
 import 'package:jobminder/screens/form_container_widget.dart';
@@ -118,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
     await Future.delayed(const Duration(seconds: 2));
     
     if (auth.isSignedIn()) {
-      // ignore: use_build_context_synchronously
+      FocusManager.instance.primaryFocus?.unfocus();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const HomeScreen()));
     } else {
