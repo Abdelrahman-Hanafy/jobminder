@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Home Screen',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unnecessary_null_comparison
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -26,12 +26,72 @@ class FirebaseService {
     return _user != null;
   }
 
+  Future<String> listenUserName() async{
+    final snapshot =
+        await _database.ref().child('${_user?.uid}/UserName').get();
+    if (snapshot == null || snapshot.value == null){
+      return "";
+    }
+    final name = snapshot.value as String;
+
+    return name;
+  }
+
+  Future<Map<String, int>> listenToApplicationStatesNumber() async {
+      Map <String, int> counters = {
+        "Accepted": 0,
+        "Rejected": 0,
+      };
+
+      final snapshot =
+        await _database.ref().child('${_user?.uid}/States').get();
+      if (snapshot == null || snapshot.value == null){
+      return counters;
+    }
+      final jobs = Map<String, Object>.from(snapshot.value as dynamic);
+      jobs.forEach((key, value) {
+        // final tmp = value as Map<String, dynamic>;
+        // print(value);
+        final states = Map<String, Object>.from(value as dynamic);
+        states.forEach((key, value) {
+          final state = ApplicationState.fromJson(
+            Map<String, Object>.from(value as dynamic));
+          if (state.jobStatuses == JobStatus.accpeted) {
+            counters["Accepted"] = counters["Accepted"]! + 1;
+          } else if (state.jobStatuses == JobStatus.rejected) {
+            counters["Rejected"] = counters["Rejected"]! + 1;
+          }
+        });
+      });
+
+      return counters;
+    }
+
+  Future<int> listenToAppsNumber() async {
+    int count = 0;
+    final snapshot =
+        await _database.ref().child('${_user?.uid}/Applications').get();
+    if (snapshot == null || snapshot.value == null) {
+      return count;
+    }
+    final comps = Map<String, Object>.from(snapshot.value as dynamic);
+    comps.forEach((key, value) {
+      final apps = Map<String, Object>.from(value as dynamic);
+      apps.forEach((key, value) {
+        count++;
+      });
+    });
+
+    return count;
+  }
+
   void addApplication(Application app) {
     if (!isSignedIn()) {
       print("no user");
       return;
     }
-    final ref = _database.ref().child('${_user?.uid}/Applications/${app.company.name}');
+    final ref =
+        _database.ref().child('${_user?.uid}/Applications/${app.company.name}');
     ref.push().set({
       "ID": app.id,
       "postion": app.postion,
@@ -41,7 +101,11 @@ class FirebaseService {
   }
 
   void listenToApplications(ApplicationsBloc bloc, Company comp) {
-    _database.ref().child('${_user?.uid}/Applications/${comp.name}').get().then((snapshot) {
+    _database
+        .ref()
+        .child('${_user?.uid}/Applications/${comp.name}')
+        .get()
+        .then((snapshot) {
       if (snapshot.value == null) {
         return;
       }
@@ -50,13 +114,14 @@ class FirebaseService {
       apps.forEach((key, value) {
         // final tmp = value as Map<String, dynamic>;
         // print(value);
-        Application app = Application.fromJson(Map<String, Object>.from(value as dynamic), comp);
+        Application app = Application.fromJson(
+            Map<String, Object>.from(value as dynamic), comp);
         bloc.add(AddApplicationEvent(app, applications));
       });
     });
   }
 
-  void addApplicationState(ApplicationState appState,String appId) {
+  void addApplicationState(ApplicationState appState, String appId) {
     if (!isSignedIn()) {
       print("no user");
       return;
@@ -70,7 +135,11 @@ class FirebaseService {
   }
 
   void listenToApplicationStates(ApplicationDetailsBloc bloc, Application app) {
-    _database.ref().child('${_user?.uid}/States/${app.id}').get().then((snapshot) {
+    _database
+        .ref()
+        .child('${_user?.uid}/States/${app.id}')
+        .get()
+        .then((snapshot) {
       if (snapshot.value == null) {
         return;
       }
@@ -78,13 +147,13 @@ class FirebaseService {
 
       apps.forEach((key, value) {
         // print(value);
-        ApplicationState appState = ApplicationState.fromJson(Map<String, Object>.from(value as dynamic));
+        ApplicationState appState = ApplicationState.fromJson(
+            Map<String, Object>.from(value as dynamic));
         app.appStates.clear();
         bloc.add(AddStateEvent(app, appState));
       });
     });
   }
-  
 
   // ignore: non_constant_identifier_names
   void addCompany(CompanyName) {
@@ -173,7 +242,6 @@ class FirebaseService {
   void listenToApplicationDetails(ApplicationDetailsBloc bloc) {}
 }
 
-
 String _formatDate(DateTime date) {
-    return '${NumberFormat('00').format(date.year)}-${NumberFormat('00').format(date.month)}-${NumberFormat('00').format(date.day)}';
-  }
+  return '${NumberFormat('00').format(date.year)}-${NumberFormat('00').format(date.month)}-${NumberFormat('00').format(date.day)}';
+}
