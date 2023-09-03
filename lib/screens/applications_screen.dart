@@ -86,11 +86,10 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                            BlocProvider(
-                              create: (context) => ApplicationDetailsBloc(app),
-                              child: const ApplicationDetailsScreen(),
-                            ),
+                          builder: (context) => BlocProvider(
+                            create: (context) => ApplicationDetailsBloc(app),
+                            child: const ApplicationDetailsScreen(),
+                          ),
                         ),
                       );
                     },
@@ -207,6 +206,9 @@ class _ApplicationFormState extends State<ApplicationForm> {
                         widget.comp,
                         id.text,
                       ));
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  widget.bloc.emit(const ApplicationsInitialState());
+
                   Navigator.pop(context);
                 },
               ),

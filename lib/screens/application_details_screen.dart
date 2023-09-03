@@ -63,6 +63,7 @@ class _ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
               locator
                   .get<FirebaseService>()
                   .listenToApplicationStates(bloc, bloc.app);
+
               if (state is ApplicationDetailsSuccessAddDataState ||
                   state is ApplicationDetailsInitialState) {
                 return SizedBox(
@@ -186,6 +187,9 @@ class _ApplicationStateFormState extends State<ApplicationStateForm> {
                 locator
                     .get<FirebaseService>()
                     .addApplicationState(newState, widget.application.id);
+                // ignore: invalid_use_of_visible_for_testing_member
+                widget.bloc.emit(
+                    ApplicationDetailsSuccessAddDataState(widget.bloc.app));
                 Navigator.pop(context);
               },
             ),

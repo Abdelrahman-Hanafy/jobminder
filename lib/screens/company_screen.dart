@@ -34,7 +34,6 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Companies"),
-        
         actions: <Widget>[
           IconButton(
             icon: const Icon(
@@ -74,11 +73,10 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                              BlocProvider(
-                                create: (context) => ApplicationsBloc(),
-                                child: ApplicationsScreen(company: c),
-                              ),
+                            builder: (context) => BlocProvider(
+                              create: (context) => ApplicationsBloc(),
+                              child: ApplicationsScreen(company: c),
+                            ),
                           ),
                         );
                       },
@@ -148,6 +146,8 @@ class _CompaniesFormState extends State<CompaniesForm> {
                 onPressed: () {
                   if (name.text != "") {
                     locator.get<FirebaseService>().addCompany(name.text);
+                    // ignore: invalid_use_of_visible_for_testing_member
+                    widget.bloc.emit(const CompaniesInitialState());
                   }
                   Navigator.pop(context);
                 },
