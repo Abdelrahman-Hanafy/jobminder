@@ -17,4 +17,7 @@ enum JobStatus {
   jobForm, 
   technicalAssessment,
   interview,
+  accpeted,
+  rejected,
+  jobOffer
 }

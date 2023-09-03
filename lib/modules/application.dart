@@ -34,5 +34,5 @@ enum WorkModle{
 }
 
 enum JobType{
-  fulltime, parttime, freelance, internship, contract
+  fulltime, parttime, freelance, internship, contract, other
 }
